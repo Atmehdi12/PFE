@@ -1,56 +1,25 @@
-/*import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  HttpCode,
-  HttpStatus,
-  NotImplementedException,
-} from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { SignupDto } from './dtos/signup.dto';
+import { LoginDto } from './dtos/login.dto';
+import { RefreshTokenDto } from './dtos/refresh-tokens.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
-  @HttpCode(HttpStatus.OK)
-  @Post('login')
-  login(@Body() input: { username: string; password: string }) {
-    return this.authService.authenticate(input);
-  }
-}*/
-
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  HttpCode,
-  HttpStatus,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
-import { AuthGuard } from './auth.guard';
-import { AuthService } from './auth.service';
-import { Public } from './public.decorator';
-
-@Controller('auth')
-export class AuthController {
-  constructor(private authService: AuthService) {}
-
-  @Public()
-  @HttpCode(HttpStatus.OK)
-  @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) {
-    return this.authService.signIn(signInDto.username, signInDto.password);
+  @Post('signup')
+  async signUp(@Body() signupData: SignupDto) {
+    return this.authService.signup(signupData);
   }
 
-  @UseGuards(AuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  @Post('login')
+  async login(@Body() credentials: LoginDto) {
+    return this.authService.login(credentials);
+  }
+
+  @Post('refresh')
+  async refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authService.refreshTokens(refreshTokenDto.refreshToken);
   }
 }
