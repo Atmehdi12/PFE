@@ -6,6 +6,9 @@ import { CreateRoleDto } from './dtos/role.dto';
 
 @Injectable()
 export class RolesService {
+  create(createRoleDto: CreateRoleDto) {
+    throw new Error('Method not implemented.');
+  }
   constructor(@InjectModel(Role.name) private RoleModel: Model<Role>) {}
 
   async createRole(role: CreateRoleDto) {

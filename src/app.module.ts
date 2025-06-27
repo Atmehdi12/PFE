@@ -6,6 +6,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RolesModule } from './roles/roles.module';
+import { UsersModule } from './users/users.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './roles/roles.guard';
+import { PermissionsGuard } from './guards/permissions.guard';
+import { MessagesModule } from './slack-messages/slack-messages.module';
 import config from './config/config';
 
 @Module({
@@ -32,8 +37,20 @@ import config from './config/config';
     }),
     AuthModule,
     RolesModule,
+    UsersModule,
+    MessagesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard, // ✅ second global guard
+    },
+  ],
 })
 export class AppModule {}
